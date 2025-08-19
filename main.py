@@ -447,7 +447,14 @@ async def analyze_data(
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
-
+        
+# Mirror POST / to POST /api/
+@app.post("/")
+async def analyze_data_root(
+    questions_txt: UploadFile = File(...),
+    files: List[UploadFile] = File(default=[])
+):
+    return await analyze_data(questions_txt, files)
 
 async def execute_workflow_sync(
     workflow_type: str, workflow_input: Dict[str, Any], task_id: str
