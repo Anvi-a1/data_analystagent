@@ -332,7 +332,7 @@ def prepare_workflow_parameters(
 
 @app.post("/api/")
 async def analyze_data(
-    questions_txt: UploadFile = File(..., description="Required questions.txt file"),
+    questions: UploadFile = File(..., alias="questions.txt", description="Required questions.txt file"),
     files: List[UploadFile] = File(default=[], description="Optional additional files"),
 ):
     """
@@ -447,13 +447,12 @@ async def analyze_data(
         logger.error(f"Error processing request: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
         
-# Mirror POST / to POST /api/
 @app.post("/")
 async def analyze_data_root(
-    questions_txt: UploadFile = File(...),
+    questions: UploadFile = File(..., alias="questions.txt"),
     files: List[UploadFile] = File(default=[])
 ):
-    return await analyze_data(questions_txt, files)
+    return await analyze_data(questions, files)
 
 
 async def execute_workflow_sync(
